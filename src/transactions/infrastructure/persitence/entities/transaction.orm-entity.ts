@@ -2,12 +2,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { TransactionStatus } from 'src/transactions/domain/enums/transaction-status.enum';
-
+import { TransactionStatus } from '../../../domain/enums/transaction-status.enum';
+import { ProductOrmEntity } from '../../../../products/infrastructure/persistence/entities/product.orm-entity';
+import { UserOrmEntity } from '../../../../users/infrastructure/persistence/entities/user.typeorm-entity';
 @Entity('transactions')
 export class TransactionOrmEntity {
   @PrimaryGeneratedColumn()
@@ -68,6 +71,7 @@ export class TransactionOrmEntity {
 
   @Column({
     name: 'wompi_transaction_id',
+    type: 'varchar',
     nullable: true,
     length: 100,
   })
@@ -78,4 +82,12 @@ export class TransactionOrmEntity {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @ManyToOne(() => ProductOrmEntity)
+  @JoinColumn({ name: 'product_id' })
+  product: ProductOrmEntity;
+
+  @ManyToOne(() => UserOrmEntity)
+  @JoinColumn({ name: 'user_id' })
+  user: UserOrmEntity;
 }

@@ -6,6 +6,7 @@ import databaseConfig from './config/database.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './products/products.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { UsersModule } from './users/user.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { TransactionsModule } from './transactions/transactions.module';
     }),
     ProductsModule,
     TransactionsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
