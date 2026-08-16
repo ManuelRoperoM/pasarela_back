@@ -14,6 +14,9 @@ import { TransactionStatus } from '../../domain/enums/transaction-status.enum';
 import { CreateTransactionDto } from '../dto/create-transaction.dto';
 import { TransactionPricingService } from '../services/transaction-pricing.service';
 import { TransactionReferenceService } from '../services/transaction-reference.service';
+import { Delivery } from 'src/deliveries/domain/entities/delivery.entity';
+import { DeliveryStatus } from 'src/deliveries/domain/enums/delivery-status.enum';
+import { DeliveryRepository } from 'src/deliveries/domain/repositories/delivery.repository';
 
 @Injectable()
 export class CreateTransactionUseCase {
@@ -23,6 +26,7 @@ export class CreateTransactionUseCase {
     private readonly transactionRepository: TransactionRepository,
     private readonly pricingService: TransactionPricingService,
     private readonly referenceService: TransactionReferenceService,
+    private readonly deliveryRepository: DeliveryRepository,
   ) {}
 
   async execute(dto: CreateTransactionDto): Promise<Transaction> {
@@ -63,6 +67,23 @@ export class CreateTransactionUseCase {
       new Date(),
     );
 
-    return this.transactionRepository.save(transaction);
+    const savedTransaction = await this.transactionRepository.save(transaction);
+
+    // Asignacion de delivery
+    const delivery = new Delivery(
+      0,
+      savedTransaction.id,
+      dto.delivery.address,
+      dto.delivery.city,
+      dto.delivery.department,
+      dto.delivery.postalCode,
+      DeliveryStatus.PENDING,
+      new Date(),
+      new Date(),
+    );
+
+    await this.deliveryRepository.save(delivery);
+
+    return savedTransaction;
   }
 }

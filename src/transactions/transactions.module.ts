@@ -10,12 +10,15 @@ import { TransactionReferenceService } from './application/services/transaction-
 import { ProductsModule } from 'src/products/products.module';
 import { UsersModule } from 'src/users/user.module';
 import { TransactionsController } from './infrastructure/controllers/transaction.controller';
+import { DeliveriesModule } from 'src/deliveries/delivery.module';
+import { GetTransactionUseCase } from './application/use-cases/get-transaction.use-case';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([TransactionOrmEntity]),
     ProductsModule,
     UsersModule,
+    DeliveriesModule,
   ],
   controllers: [TransactionsController],
   providers: [
@@ -23,6 +26,7 @@ import { TransactionsController } from './infrastructure/controllers/transaction
     CreateTransactionUseCase,
     TransactionPricingService,
     TransactionReferenceService,
+    GetTransactionUseCase,
     {
       provide: TransactionRepository,
       useExisting: TransactionTypeOrmRepository,
