@@ -4,6 +4,7 @@ import 'dotenv/config';
 import { ProductOrmEntity } from './src/products/infrastructure/persistence/entities/product.orm-entity';
 import { UserOrmEntity } from './src/users/infrastructure/persistence/entities/user.typeorm-entity';
 import { TransactionOrmEntity } from './src/transactions/infrastructure/persitence/entities/transaction.orm-entity';
+import { DeliveryOrmEntity } from './src/deliveries/infrastructure/persistence/entities/delivery.orm-entity';
 
 export default new DataSource({
   type: 'postgres',
@@ -13,7 +14,12 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 
-  entities: [ProductOrmEntity, UserOrmEntity, TransactionOrmEntity],
+  entities: [
+    ProductOrmEntity,
+    UserOrmEntity,
+    TransactionOrmEntity,
+    DeliveryOrmEntity,
+  ],
 
   migrations: ['src/database/migrations/*.ts'],
 });
