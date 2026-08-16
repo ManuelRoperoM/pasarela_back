@@ -7,6 +7,7 @@ import { ProductRepository } from './domain/repositories/product.repository';
 import { GetProductUseCase } from './application/use-cases/get-product.use-case';
 import { UpdateProductStockUseCase } from './application/use-cases/update-product-stock.use-case';
 import { ProductController } from './infrastructure/controllers/product.controller';
+import { GetAllProductsUseCase } from './application/use-cases/get-all-products.use.case';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ProductOrmEntity])],
@@ -14,6 +15,7 @@ import { ProductController } from './infrastructure/controllers/product.controll
   providers: [
     GetProductUseCase,
     UpdateProductStockUseCase,
+    GetAllProductsUseCase,
     ProductTypeOrmRepository,
     {
       provide: ProductRepository,
