@@ -24,6 +24,7 @@ async function seed() {
       description: 'Camiseta básica de algodón para uso diario',
       price: 50000,
       stock: 20,
+      imageUrl: '/images/camiseta.jpeg',
     }),
 
     productRepository.create({
@@ -31,6 +32,7 @@ async function seed() {
       description: 'Gorra deportiva ajustable',
       price: 30000,
       stock: 15,
+      imageUrl: '/images/gorra.jpeg',
     }),
 
     productRepository.create({
@@ -38,6 +40,7 @@ async function seed() {
       description: 'Chaqueta impermeable para exteriores',
       price: 120000,
       stock: 10,
+      imageUrl: '/images/chaqueta.jpeg',
     }),
   ];
 

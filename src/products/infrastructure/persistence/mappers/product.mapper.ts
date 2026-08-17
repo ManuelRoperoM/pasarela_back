@@ -9,6 +9,7 @@ export class ProductMapper {
       entity.description,
       Number(entity.price),
       entity.stock,
+      entity.imageUrl,
       entity.createdAt,
       entity.updatedAt,
     );
@@ -22,6 +23,7 @@ export class ProductMapper {
     entity.description = product.description;
     entity.price = product.price;
     entity.stock = product.stock;
+    entity.imageUrl = product.imageUrl;
     entity.createdAt = product.createdAt;
     entity.updatedAt = product.updatedAt;
 

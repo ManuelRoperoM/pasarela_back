@@ -5,6 +5,7 @@ export class Product {
     public description: string,
     public price: number,
     public stock: number,
+    public imageUrl: string | null,
     public readonly createdAt: Date,
     public updatedAt: Date,
   ) {}
