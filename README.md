@@ -1,98 +1,479 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Pasarela de Pagos — Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend de una plataforma de checkout y procesamiento de pagos desarrollado con **NestJS, TypeScript y PostgreSQL**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+El proyecto permite consultar productos, crear transacciones, procesar pagos mediante **Wompi**, consultar el estado de una transacción y gestionar la información de entrega.
 
-## Description
+La aplicación está construida siguiendo una arquitectura orientada a casos de uso y separación de responsabilidades entre dominio, aplicación e infraestructura.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## Tecnologías
 
-```bash
-$ npm install
+- **Node.js**
+- **NestJS**
+- **TypeScript**
+- **PostgreSQL**
+- **TypeORM**
+- **Wompi API**
+- **Jest**
+- **Swagger / OpenAPI**
+- **class-validator**
+- **class-transformer**
+
+---
+
+## Arquitectura
+
+El proyecto utiliza una arquitectura basada en separación de responsabilidades:
+
+```text
+src/
+├── products/
+│   ├── application/
+│   ├── domain/
+│   └── infrastructure/
+│
+├── transactions/
+│   ├── application/
+│   ├── domain/
+│   └── infrastructure/
+│
+├── users/
+│   ├── application/
+│   ├── domain/
+│   └── infrastructure/
+│
+├── deliveries/
+│   ├── domain/
+│   └── infrastructure/
+│
+└── database/
+    └── seed/
 ```
 
-## Compile and run the project
+Los **casos de uso** contienen la lógica principal de negocio, mientras que los repositorios abstraen el acceso a persistencia.
+
+---
+
+## Requisitos
+
+Antes de ejecutar el proyecto se requiere:
+
+- Node.js
+- npm
+- PostgreSQL
+- Una base de datos PostgreSQL creada
+- Credenciales de acceso a Wompi para procesamiento de pagos
+
+---
+
+## Instalación
+
+Clonar el repositorio e instalar las dependencias:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+---
+
+## Variables de entorno
+
+Crear un archivo `.env` en la raíz del proyecto.
+
+Ejemplo:
+
+```env
+PORT=3000
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=your_password
+DB_NAME=pasarela_db
+
+WOMPI_BASE_URL=https://sandbox.wompi.co/v1
+WOMPI_PUBLIC_KEY=your_public_key
+WOMPI_PRIVATE_KEY=your_private_key
+```
+
+> Las credenciales reales de Wompi no deben incluirse en el repositorio.
+
+---
+
+## Base de datos
+
+El proyecto utiliza **PostgreSQL** como sistema de persistencia.
+
+La configuración de TypeORM se encuentra en `data-source.ts`.
+
+Las modificaciones estructurales de la base de datos se manejan mediante **migraciones**, evitando modificar directamente el esquema de la base de datos.
+
+---
+
+## Migraciones
+
+El proyecto utiliza TypeORM para administrar las migraciones.
+
+### Generar una migración
+
+Después de modificar una entidad:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run migration:generate -- src/database/migrations/NombreDeLaMigracion
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Ejecutar migraciones
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run migration:run
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Revertir la última migración
 
-## Resources
+```bash
+npm run migration:revert
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+Los scripts utilizados son:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```json
+{
+  "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js -d data-source.ts",
+  "migration:generate": "npm run typeorm -- migration:generate",
+  "migration:run": "npm run typeorm -- migration:run",
+  "migration:revert": "npm run typeorm -- migration:revert"
+}
+```
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Seed de productos
 
-## Stay in touch
+El proyecto cuenta con un seed para cargar productos iniciales en la base de datos.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Ejecutar:
 
-## License
+```bash
+npm run seed:products
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+El seed se encuentra en:
+
+```text
+src/database/seed/product.seed.ts
+```
+
+Este proceso crea productos de prueba para poder utilizar el checkout.
+
+---
+
+## Ejecutar el proyecto
+
+### Desarrollo
+
+```bash
+npm run start
+```
+
+### Desarrollo con watch
+
+```bash
+npm run start:dev
+```
+
+### Producción
+
+```bash
+npm run start:prod
+```
+
+Por defecto, la aplicación utiliza el puerto:
+
+```text
+3000
+```
+
+---
+
+## Swagger
+
+La documentación de la API está disponible mediante Swagger.
+
+Con el backend ejecutándose localmente:
+
+**http://localhost:3000/api/docs**
+
+Desde Swagger se pueden consultar y probar los endpoints disponibles para:
+
+- Products
+- Transactions
+- Users
+- Payment processing
+- Payment status
+- Product stock
+
+---
+
+## Principales endpoints
+
+### Productos
+
+```http
+GET /products
+```
+
+Obtiene todos los productos disponibles.
+
+```http
+GET /products/:id
+```
+
+Obtiene un producto específico.
+
+```http
+PATCH /products/:id/stock
+```
+
+Actualiza el stock de un producto.
+
+---
+
+### Usuarios
+
+```http
+POST /users
+```
+
+Crea un usuario.
+
+```http
+GET /users/:id
+```
+
+Obtiene un usuario por ID.
+
+---
+
+### Transacciones
+
+```http
+POST /transactions
+```
+
+Crea una nueva transacción.
+
+La creación de la transacción valida:
+
+- Existencia del usuario.
+- Existencia del producto.
+- Stock disponible.
+- Cálculo del valor del producto.
+- Tarifa base.
+- Tarifa de envío.
+- Valor total.
+- Información de entrega.
+
+---
+
+### Procesamiento del pago
+
+```http
+POST /transactions/:id/payment
+```
+
+Procesa el pago de una transacción utilizando Wompi.
+
+El backend se encarga de comunicarse con la API de Wompi y almacenar la referencia de la transacción correspondiente.
+
+---
+
+### Estado del pago
+
+```http
+GET /transactions/:id/payment/status
+```
+
+Consulta el estado actual del pago.
+
+Este endpoint permite al frontend consultar periódicamente el estado de la transacción hasta obtener un resultado definitivo.
+
+---
+
+### Consulta de transacción
+
+```http
+GET /transactions/:id
+```
+
+Obtiene la información completa de una transacción.
+
+---
+
+## Flujo de compra
+
+El flujo principal de la aplicación es:
+
+```text
+1. Consultar productos
+        ↓
+2. Seleccionar producto
+        ↓
+3. Crear transacción
+        ↓
+4. Registrar información de entrega
+        ↓
+5. Procesar pago
+        ↓
+6. Consultar estado del pago
+        ↓
+7. Confirmar resultado
+```
+
+El frontend utiliza el endpoint de consulta de estado para confirmar el resultado final del pago.
+
+---
+
+## Validación
+
+Los DTOs utilizan `class-validator` para validar la información recibida por la API.
+
+La aplicación utiliza un `ValidationPipe` global con:
+
+```typescript
+new ValidationPipe({
+  whitelist: true,
+  forbidNonWhitelisted: true,
+  transform: true,
+});
+```
+
+Esto permite rechazar propiedades no esperadas y transformar los datos recibidos según las reglas definidas en los DTOs.
+
+---
+
+## Tests
+
+El proyecto utiliza **Jest** para pruebas unitarias.
+
+Ejecutar:
+
+```bash
+npm run test
+```
+
+Para ejecutar las pruebas con cobertura:
+
+```bash
+npm run test:cov
+```
+
+Las pruebas principales se encuentran enfocadas en los casos de uso de negocio, especialmente en el flujo de creación y procesamiento de transacciones.
+
+---
+
+## Integración con Wompi
+
+El procesamiento de pagos utiliza la API de **Wompi**.
+
+El backend encapsula la comunicación con el proveedor de pagos para evitar que la lógica externa quede directamente acoplada a los controladores.
+
+El flujo general es:
+
+```text
+Frontend
+   ↓
+Backend
+   ↓
+Transaction Use Case
+   ↓
+Wompi Service
+   ↓
+Wompi API
+   ↓
+Backend
+   ↓
+Frontend
+```
+
+El frontend no se comunica directamente con Wompi para procesar la transacción del sistema.
+
+---
+
+## Manejo de estados
+
+Las transacciones manejan diferentes estados durante su ciclo de vida.
+
+Por ejemplo:
+
+```text
+PENDING
+   ↓
+Procesamiento del pago
+   ↓
+APPROVED / DECLINED / ERROR
+```
+
+El resultado final es consultado mediante:
+
+```http
+GET /transactions/:id/payment/status
+```
+
+---
+
+## Manejo de stock
+
+Antes de crear una transacción se valida que exista stock suficiente:
+
+```text
+Stock disponible >= cantidad solicitada
+```
+
+Si no existe suficiente inventario, la API responde con un error indicando que el stock es insuficiente.
+
+---
+
+## CORS
+
+La aplicación habilita CORS para permitir la comunicación con el frontend:
+
+```typescript
+app.enableCors();
+```
+
+Esto permite desplegar el frontend y backend como aplicaciones independientes.
+
+---
+
+## Estructura de la solución
+
+La aplicación separa las responsabilidades principales en:
+
+### Domain
+
+Contiene las entidades, enums y contratos relacionados con el dominio.
+
+### Application
+
+Contiene los casos de uso y servicios que implementan las reglas de negocio.
+
+### Infrastructure
+
+Contiene la implementación concreta de:
+
+- Controladores.
+- Persistencia.
+- TypeORM.
+- Integraciones externas.
+- Mappers.
+- Servicios externos.
+
+Esta separación permite mantener la lógica de negocio independiente de los detalles de infraestructura.
+
+---
+
+## Licencia
+
+Este proyecto fue desarrollado como parte de una prueba técnica.
