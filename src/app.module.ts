@@ -8,12 +8,13 @@ import { ProductsModule } from './products/products.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { UsersModule } from './users/user.module';
 import { DeliveriesModule } from './deliveries/delivery.module';
+import wompiConfig from './config/wompi.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig],
+      load: [databaseConfig, wompiConfig],
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
